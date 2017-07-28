@@ -14,9 +14,9 @@ app.get('/dummyget', function (req, res) {
 
 
 app.post('/webhook', function (req, res) {
-    if (req.body.result.parameters['recipeitem']) {
-        recipeitem = req.body.result.parameters['recipeitem'];
-        callRecipePuppy(recipeitem)
+    if (req.body.result.parameters['fooditem']) {
+        var fooditem = req.body.result.parameters['fooditem'];
+        callRecipePuppy(fooditem)
             .then((output) => {
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify({ 'speech': output, 'displayText': output }));
@@ -32,9 +32,9 @@ app.post('/webhook', function (req, res) {
 });
 
 
-function callRecipePuppy(recipeitem) {
+function callRecipePuppy(fooditem) {
     return new Promise((resolve, reject) => {
-        http.get(recipepuppyHost + recipeitem, (res) => {
+        http.get(recipepuppyHost + fooditem, (res) => {
             let body = '';
             res.on('data', (d) => body += d);
             res.on('end', () => {
