@@ -1,0 +1,18 @@
+{
+  "name": "apiaiwebhooks",
+  "version": "1.0.0",
+  "description": "Api.ai webhook test",
+  "main": "index.js",
+  "scripts": {
+    "test": "node index.js"
+  },
+  "keywords": [
+    "api.ai",
+    "heroku"
+  ],
+  "author": "Sandeepkumar Parekh",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.15.3"
+  }
+}
