@@ -13,23 +13,24 @@ app.get('/dummyget', function (req, res) {
 });
 
 
-app.post('/recipe', function (req, res) {
-    console.log(req);
-    let recipeitem = '';
+app.post('/webhook', function (req, res) {
     if (req.body.result.parameters['recipeitem']) {
         recipeitem = req.body.result.parameters['recipeitem'];
-        console.log('Finding recipe for : ' + recipeitem);
-    }
-
-    callRecipePuppy(recipeitem).then((output) => {
+        callRecipePuppy(recipeitem)
+            .then((output) => {
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify({ 'speech': output, 'displayText': output }));
+            })
+            .catch((error) => {
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify({ 'speech': error, 'displayText': error }));
+            });
+    } else {
         res.setHeader('Content-Type', 'application/json');
-        res.send(JSON.stringify({ 'speech': output, 'displayText': output }));
-    })
-        .catch((error) => {
-            res.setHeader('Content-Type', 'application/json');
-            res.send(JSON.stringify({ 'speech': error, 'displayText': error }));
-        });
+        res.send(JSON.stringify({ 'speech': "No Proper hook found", 'displayText': "No Proper hook found" }));
+    }
 });
+
 
 function callRecipePuppy(recipeitem) {
     return new Promise((resolve, reject) => {
