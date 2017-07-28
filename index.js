@@ -39,7 +39,7 @@ function callRecipePuppy(fooditem) {
             res.on('data', (d) => body += d);
             res.on('end', () => {
                 let jO = JSON.parse(body);
-                let firstItem = jO.results[0];
+                let firstItem = jO.results[Math.floor((Math.random() * jO.results.length))];
 
                 let output = firstItem.title + " using " + firstItem.href;
                 resolve(output);
