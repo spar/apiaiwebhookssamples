@@ -14,8 +14,8 @@ app.get('/dummyget', function (req, res) {
 
 
 app.post('/webhook', function (req, res) {
-    if (req.body.result.parameters['fooditem']) {
-        var fooditem = req.body.result.parameters['fooditem'];
+    if (req.body.result.parameters['FoodItem']) {
+        var fooditem = req.body.result.parameters['FoodItem'];
         callRecipePuppy(fooditem)
             .then((output) => {
                 res.setHeader('Content-Type', 'application/json');
