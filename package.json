@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "test": "node index.js",
-     "start": "node index.js"
+    "start": "node index.js"
   },
   "keywords": [
     "api.ai",
@@ -14,6 +14,7 @@
   "author": "Sandeepkumar Parekh",
   "license": "ISC",
   "dependencies": {
+    "body-parser": "^1.17.2",
     "express": "^4.15.3"
   }
 }
