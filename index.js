@@ -43,7 +43,7 @@ function callRecipePuppy(fooditem) {
 
                 let output = "Found a recipe for: " + firstItem.title + ". Go to:  " + firstItem.href;
                 var obj = {
-                    text: encodeURIComponent('<b><Title:/b> ' + firstItem.title + '\n' + '<b>Ingredients:</b> ' + firstItem.ingredients + '\n' + '<b>Link:</b> ' + firstItem.href),
+                    text: htmlEntities('<b><Title:/b> ' + firstItem.title + '\n' + '<b>Ingredients:</b> ' + firstItem.ingredients + '\n' + '<b>Link:</b> ' + firstItem.href),
                     parse_mode: 'HTML'
                 }
                 resolve(obj);
@@ -55,7 +55,9 @@ function callRecipePuppy(fooditem) {
         });
     });
 }
-
+function htmlEntities(str) {
+    return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
 app.listen((process.env.PORT || 5000), function () {
     console.log("Server listening");
 });
