@@ -19,7 +19,7 @@ app.post('/webhook', function (req, res) {
         callRecipePuppy(fooditem)
             .then((output) => {
                 res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({ 'speech': output, 'displayText': output }));
+                res.send(JSON.stringify({ 'speech': output.tilte, 'displayText': output.title + "\n"+ output.href,'data': output }));
             })
             .catch((error) => {
                 res.setHeader('Content-Type', 'application/json');
@@ -41,8 +41,12 @@ function callRecipePuppy(fooditem) {
                 let jO = JSON.parse(body);
                 let firstItem = jO.results[Math.floor((Math.random() * jO.results.length))];
 
-                let output = "Found a recipe for: "+ firstItem.title + ". Go to:  " + firstItem.href;
-                resolve(output);
+                let output = "Found a recipe for: " + firstItem.title + ". Go to:  " + firstItem.href;
+                var obj = new {
+                    title: firstItem.title,
+                    image: firstItem.image
+                }
+                resolve(obj);
             });
 
             res.on('error', (error) => {
