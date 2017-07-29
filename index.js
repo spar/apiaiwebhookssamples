@@ -42,9 +42,9 @@ function callRecipePuppy(fooditem) {
                 let firstItem = jO.results[Math.floor((Math.random() * jO.results.length))];
 
                 let output = "Found a recipe for: " + firstItem.title + ". Go to:  " + firstItem.href;
-                var obj = new {
+                var obj =  {
                     title: firstItem.title,
-                    image: firstItem.image
+                    image: firstItem.href
                 }
                 resolve(obj);
             });
