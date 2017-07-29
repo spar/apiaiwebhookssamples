@@ -43,7 +43,7 @@ function callRecipePuppy(fooditem) {
 
                 let output = "Found a recipe for: " + firstItem.title + ". Go to:  " + firstItem.href;
                 var obj = {
-                    caption: '<b><Title:/b> ' + firstItem.title + '\n\n' + '<b>Ingredients:</b> ' + firstItem.ingredients + '\n\n' + '<b>Link:</b> ' + firstItem.href,
+                    text: '<b><Title:/b> ' + firstItem.title + '\n' + '<b>Ingredients:</b> ' + firstItem.ingredients + '\n' + '<b>Link:</b> ' + firstItem.href,
                     photo: firstItem.thumbnail,
                     parse_mode: 'HTML'
                 }
