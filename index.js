@@ -19,7 +19,7 @@ app.post('/webhook', function (req, res) {
         callRecipePuppy(fooditem)
             .then((output) => {
                 res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({ 'speech': output.tilte, 'displayText': output.title + "\n"+ output.image,'data': output }));
+                res.send(JSON.stringify({ 'speech': output.tilte, 'displayText': output.title + "\n"+ output.image,'data': JSON.stringify(output) }));
             })
             .catch((error) => {
                 res.setHeader('Content-Type', 'application/json');
