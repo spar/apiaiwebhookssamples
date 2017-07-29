@@ -18,10 +18,16 @@ app.post('/webhook', function (req, res) {
         var fooditem = req.body.result.parameters['FoodItem'];
         callRecipePuppy(fooditem)
             .then((output) => {
+
+                let displayText = `Found recipe for: ${output.title} at ${output.href}`;
+                let telegramText = htmlEntities('<b><Title:/b> ' + output.title + '\n' + '<b>Ingredients:</b> ' + output.ingredients + '\n' + '<b>Link:</b> ' + output.href);
+                let result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(telegramText, 'HTML'));
+                console.log(result);
                 res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({ 'speech': 'Found Recipe for: ' + output.title + '\n' + output.href, 'displayText': output.title + '\n' + output.href, 'data': { 'telegram': output } }));
+                res.send(JSON.stringify(result));
             })
             .catch((error) => {
+                console.log(error);
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify({ 'speech': error, 'displayText': error }));
             });
@@ -40,13 +46,8 @@ function callRecipePuppy(fooditem) {
             res.on('end', () => {
                 let jO = JSON.parse(body);
                 let firstItem = jO.results[Math.floor((Math.random() * jO.results.length))];
-
-                let output = "Found a recipe for: " + firstItem.title + ". Go to:  " + firstItem.href;
-                var obj = {
-                    text: htmlEntities('<b><Title:/b> ' + firstItem.title + '\n' + '<b>Ingredients:</b> ' + firstItem.ingredients + '\n' + '<b>Link:</b> ' + firstItem.href),
-                    parse_mode: 'HTML'
-                }
-                resolve(obj);
+                console.log(firstItem);
+                resolve(firstItem);
             });
 
             res.on('error', (error) => {
@@ -55,9 +56,28 @@ function callRecipePuppy(fooditem) {
         });
     });
 }
+
+function toTelgramObject(text, parse_mode) {
+    return {
+        text: text,
+        parse_mode: parse_mode
+    }
+}
+
+function toApiAiResponseMessage(speech, displayText, telegramObject = null) {
+    return {
+        speech: speech,
+        displayText: displayText,
+        data: {
+            telegram: telegramObject
+        }
+    }
+}
+
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
 }
+
 app.listen((process.env.PORT || 5000), function () {
     console.log("Server listening");
 });
