@@ -19,7 +19,7 @@ app.post('/webhook', function (req, res) {
         callRecipePuppy(fooditem)
             .then((output) => {
                 res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({ 'speech': 'Found Recipe for: ' + output.title, 'displayText': output.title + '\n' + output.image, 'data': output }));
+                res.send(JSON.stringify({ 'speech': 'Found Recipe for: ' + output.title, 'displayText': output.title + '\n' + output.href, 'data': output }));
             })
             .catch((error) => {
                 res.setHeader('Content-Type', 'application/json');
@@ -44,7 +44,8 @@ function callRecipePuppy(fooditem) {
                 let output = "Found a recipe for: " + firstItem.title + ". Go to:  " + firstItem.href;
                 var obj = {
                     title: firstItem.title,
-                    image: firstItem.href
+                    href: firstItem.href,
+                    thumbnail:firstItem.thumbnail
                 }
                 resolve(obj);
             });
