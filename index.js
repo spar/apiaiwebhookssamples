@@ -20,7 +20,7 @@ app.post('/webhook', function (req, res) {
             .then((output) => {
 
                 let displayText = `Found recipe for: ${output.title} at ${output.href}`;
-                let telegramText = htmlEntities('<b><Title:/b> ' + output.title + '\n' + '<b>Ingredients:</b> ' + output.ingredients + '\n' + '<b>Link:</b> ' + output.href);
+                let telegramText = htmlEntities('<b>Title:</b> ' + output.title + '\n' + '<b>Ingredients:</b> ' + output.ingredients + '\n' + '<b>Link:</b> ' + output.href);
                 let result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(telegramText, 'HTML'));
                 console.log(result);
                 res.setHeader('Content-Type', 'application/json');
