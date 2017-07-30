@@ -14,3 +14,6 @@ Parameter: recipeitem
 
 ## See the recipe bot running live
 https://bot.api.ai/4122d7bc-fe3a-4e27-82db-0511f6f72734
+
+## Integrated with Telegram bot 
+https://telegram.me/RecipeFinder_bot
