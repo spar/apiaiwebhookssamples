@@ -3,9 +3,8 @@
 ## Base URL
 https://apiapiwebhooksamples.herokuapp.com
 
-## Recipe Hook
-Endpoint: /recipe
-Parameter: recipeitem
+## Endpoint
+/webhook
 
 ## Deploy this app to Heroku
 <a href="https://heroku.com/deploy">
