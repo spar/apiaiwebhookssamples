@@ -38,8 +38,13 @@ app.post('/webhook', function (req, res) {
         var currencyTo = req.body.result.parameters['currency-to'];
         callFixerIo(currencyFrom, currencyTo)
             .then((output) => {
-                let displayText = `1 ${output.base} = ${output.rates[currencyTo]} ${currencyTo}`;
-                let result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(displayText, 'Markdown'));
+                let resultText = Array();
+                currencyTo.forEach(function (cur) {
+                    resultText.push(`1 ${output.base} = ${output.rates[cur.toUpperCase()]} ${cur}`);
+                }, this);
+
+                let displayText = resultText.join();
+                let result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(resultText.join('\n'), 'Markdown'));
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify(result));
             });
@@ -71,6 +76,7 @@ function callRecipePuppy(fooditem) {
 
 function callFixerIo(currencyFrom, currencyTo) {
     return new Promise((resolve, reject) => {
+        currencyTo = currencyTo.join().toUpperCase();
         let url = `${currencyConvertHost}base=${currencyFrom}&symbols=${currencyTo}`;
         http.get(url, (res) => {
             let body = '';
