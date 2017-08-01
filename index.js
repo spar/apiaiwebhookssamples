@@ -1,4 +1,5 @@
 const http = require('http');
+const https = require('https');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
@@ -7,6 +8,7 @@ app.use(bodyParser.json());
 
 const recipepuppyHost = 'http://www.recipepuppy.com/api/?q=';
 const currencyConvertHost = "http://api.fixer.io/latest?";
+const chucknorrisHost = 'https://api.chucknorris.io/jokes/random';
 
 app.get('/dummyget', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
@@ -15,7 +17,17 @@ app.get('/dummyget', function (req, res) {
 
 
 app.post('/webhook', function (req, res) {
-    if (req.body.result.parameters['FoodItem']) {
+
+    if (req.body.result.parameters['Bored']) {
+        callChuckNorrisFact()
+            .then((output) => {
+                let result = toApiAiResponseMessage(output.value, output.value, toTelgramObject(output.value, 'Markdown'));
+                res.setHeader('Content-Type', 'application/json');
+                res.send(JSON.stringify(result));
+            })
+            .catch(errorHandler);
+    }
+    else if (req.body.result.parameters['FoodItem']) {
         var fooditem = req.body.result.parameters['FoodItem'];
         callRecipePuppy(fooditem)
             .then((output) => {
@@ -27,11 +39,7 @@ app.post('/webhook', function (req, res) {
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify(result));
             })
-            .catch((error) => {
-                console.log(error);
-                res.setHeader('Content-Type', 'application/json');
-                res.send(JSON.stringify({ 'speech': error, 'displayText': error }));
-            });
+            .catch(errorHandler);
     }
     else if (req.body.result.parameters['currency-from'] && req.body.result.parameters['currency-to']) {
         var currencyFrom = req.body.result.parameters['currency-from'];
@@ -93,6 +101,23 @@ function callFixerIo(currencyFrom, currencyTo) {
     });
 }
 
+function callChuckNorrisFact() {
+    return new Promise((resolve, reject) => {
+        https.get(chucknorrisHost, (res) => {
+            let body = '';
+            res.on('data', (d) => body += d);
+            res.on('end', () => {
+                let jO = JSON.parse(body);
+                resolve(jO);
+            });
+
+            res.on('error', (error) => {
+                reject(error);
+            });
+        });
+    });
+}
+
 function toTelgramObject(text, parse_mode) {
     return {
         text: text,
@@ -112,6 +137,12 @@ function toApiAiResponseMessage(speech, displayText, telegramObject = null) {
 
 function htmlEntities(str) {
     return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+}
+
+function errorHandler(error) {
+    console.log(error);
+    res.setHeader('Content-Type', 'application/json');
+    res.send(JSON.stringify(toApiAiResponseMessage(error, error, toTelgramObject(error, 'Markdown'))));
 }
 
 app.listen((process.env.PORT || 5000), function () {
