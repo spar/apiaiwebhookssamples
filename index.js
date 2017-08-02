@@ -44,11 +44,20 @@ app.post('/webhook', function (req, res) {
     else if (req.body.result.parameters['currency-from'] && req.body.result.parameters['currency-to']) {
         var currencyFrom = req.body.result.parameters['currency-from'];
         var currencyTo = req.body.result.parameters['currency-to'];
+        var number = 1.0;
+        if (req.body.result.parameters['number']) {
+            number = parseFloat(req.body.result.parameters['number']);
+            if (number <= 0) {
+                number = 1.0;
+            }
+        }
         callFixerIo(currencyFrom, currencyTo)
             .then((output) => {
                 let resultText = Array();
                 currencyTo.forEach(function (cur) {
-                    resultText.push(`1 ${output.base} = ${output.rates[cur.toUpperCase()]} ${cur}`);
+                    var toNumber = number * parseFloat(output.rates[cur.toUpperCase()]);
+                    toNumber = toNumber.toFixed(3);
+                    resultText.push(`${number} ${output.base} = ${toNumber} ${cur}`);
                 }, this);
 
                 let displayText = resultText.join();
