@@ -9,6 +9,7 @@ app.use(bodyParser.json());
 const recipepuppyHost = 'http://www.recipepuppy.com/api/?q=';
 const currencyConvertHost = "http://api.fixer.io/latest?";
 const chucknorrisHost = 'https://api.chucknorris.io/jokes/random';
+const wikiPediaApiHost = 'https://en.wikipedia.org/w/api.php?';
 
 app.get('/dummyget', function (req, res) {
     res.setHeader('Content-Type', 'application/json');
@@ -64,6 +65,27 @@ app.post('/webhook', function (req, res) {
                 let result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(resultText.join('\n'), 'Markdown'));
                 res.setHeader('Content-Type', 'application/json');
                 res.send(JSON.stringify(result));
+            });
+    }
+    else if (req.body.result.parameters['wikisearchterm']) {
+        var searchTerm = req.body.result.parameters['wikisearchterm'];
+        callWikiPediaApi(searchTerm)
+            .then((output) => {
+                let displayText = `Nothing Found for: ${searchTerm}`;
+                let result;
+                if (output && output[1][0]) {
+                    console.log('yes');
+                    displayText = `Here is what I found in Wikipedia about ${searchTerm}: ${output[2][0]}`;
+                    let telegramText = htmlEntities(`Here is what I found in Wikipedia about *${searchTerm}*: ${output[2][0]} \n\n Read more at [WikiPedia](${output[3][0]})`);
+                    result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(telegramText, 'Markdown'));
+                }
+                res.setHeader('Content-Type', 'application/json');
+                if (result) {
+                    res.send(JSON.stringify(result));
+                }
+                else {
+                    res.send(JSON.stringify(displayText));
+                }
             });
     }
     else {
@@ -126,6 +148,24 @@ function callChuckNorrisFact() {
         });
     });
 }
+
+function callWikiPediaApi(searchTerm, format = "json", action = "opensearch", limit = 2, profile = "fuzzy") {
+    return new Promise((resolve, reject) => {
+        let url = `${wikiPediaApiHost}&format=${format}&action=${action}&limit=${limit}&profile=${profile}&search=${searchTerm}`;
+        https.get(url, (res) => {
+            let body = '';
+            res.on('data', (d) => body += d);
+            res.on('end', () => {
+                let jO = JSON.parse(body);
+                resolve(jO);
+            });
+            res.on('error', (error) => {
+                reject(error);
+            });
+        });
+    });
+}
+
 
 function toTelgramObject(text, parse_mode) {
     return {
