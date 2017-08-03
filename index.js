@@ -74,9 +74,8 @@ app.post('/webhook', function (req, res) {
                 let displayText = `Nothing Found for: ${searchTerm}`;
                 let result;
                 if (output && output[1][0]) {
-                    console.log('yes');
-                    displayText = `Here is what I found in Wikipedia about ${searchTerm}: ${output[2][0]}`;
-                    let telegramText = htmlEntities(`Here is what I found in Wikipedia about *${searchTerm}*: ${output[2][0]} \n\n Read more at [WikiPedia](${output[3][0]})`);
+                    displayText = `Here is what I found in Wikipedia about ${output[1][0]}: ${output[2][0]}`;
+                    let telegramText = htmlEntities(`Here is what I found in Wikipedia about *${output[1][0]}*: ${output[2][0]} \n\n Read more at [WikiPedia](${output[3][0]})`);
                     result = toApiAiResponseMessage(displayText, displayText, toTelgramObject(telegramText, 'Markdown'));
                 }
                 res.setHeader('Content-Type', 'application/json');
